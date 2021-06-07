@@ -1,0 +1,68 @@
+<div class="card" *ngIf="mode==0 && currentOrder">
+  <h5 class="card-header bg-info text-white"> Payment Informations</h5>
+  <div class="card-body">
+    <form #f="ngForm" (ngSubmit)="onParOrder(f.value)">
+      <div class="form-group">
+        <label class="control-label">Type:</label>
+        <select name="type" ngModel class="form-control">
+          <option value="Visa">Visa</option>
+          <option value="Cmi">Cmi</option>
+          <option value="Cmi">Cmi</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="control-label">Card Number:</label>
+        <input type="text" name="cardNumber" ngModel class="form-control">
+      </div>
+      <div class="form-group">
+        <label class="control-label">Code Verif:</label>
+        <input type="text" name="codeVerif" ngModel class="form-control">
+      </div>
+      <div class="form-group">
+        <label class="control-label">Amount:</label>
+        <input type="text" name="amount" ngModel class="form-control" [(ngModel)]="currentOrder.totalAmount">
+      </div>
+      <button type="submit" class="btn btn-primary float-right"> <i class="fa fa-dollar mx-2"></i> Pay</button>
+    </form>
+  </div>
+</div>
+
+
+<div class="card" *ngIf="mode==1 && payement">
+<h5 class="card-header bg-success text-white">Summary your paiement</h5>
+<div class="card-body">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Type Card :</label>
+        <label>{{payement.type}}</label>
+      </div>
+      <div class="form-group">
+        <label>Card Number :</label>
+        <label>{{payement.cardNumber}}</label>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Code Verif :</label>
+        <label>{{payement.codeVerif}}</label>
+      </div>
+      <div class="form-group">
+        <label>Amount :</label>
+        <label>{{payement.amount}}</label>
+      </div>
+    </div>
+  </div>
+  <button type="button" (click)="onAddPayment()" class="btn btn-success float-right"> <i class="fa fa-dollar mx-2"></i> Confirm</button>
+</div>
+</div>
+
+<div class="card" *ngIf="mode==2 && payement">
+  <h5 class="card-header bg-success text-white">Paiement</h5>
+  <div class="card-body">
+    <div class="row">
+      Your payment has added successfully
+    </div>
+    <a type="button" href="/" class="btn btn-success float-right"> Cancel</a>
+  </div>
+</div>

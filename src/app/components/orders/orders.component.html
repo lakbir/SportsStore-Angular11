@@ -1,0 +1,50 @@
+<div class="mx-5">
+  <div  *ngIf="orders; else noOrders">
+    <div class="row">
+      <form class="form-inline">
+        <div class="form-group mx-sm-3 mb-2">
+          <input type="text" class="form-control" [(ngModel)]="keyWord" name="keyWord" placeholder="Username...">
+        </div>
+        <button (click)="onSearchOrders()" class="btn btn-primary"><span class="fa fa-search"></span></button>
+        <button (click)="onRefreshOrders()" class="btn btn-warning mx-2"><span class="fa fa-refresh"></span></button>
+      </form>
+    </div>
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th width="5%">#</th>
+        <th width="25%">Date</th>
+        <th width="30%">Client</th>
+        <th width="30%">Total Amount</th>
+        <th width="5%">Payment</th>
+        <th width="5%">Options</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let ord of orders">
+        <td>{{ord.id}}</td>
+        <td>{{ord.date.substring(0, 16).replace('T',' | ')}}</td>
+        <td>{{ord.client.name}}</td>
+        <td>{{ord.totalAmount}}</td>
+        <td>
+          <span *ngIf="ord.payment" title="payed" class="badge badge-success text-white"><i class="fa fa-check"></i></span>
+          <span *ngIf="!ord.payment" title="not payed" class="badge badge-warning text-white"><i class="fa fa-warning"></i></span>
+        </td>
+        <td>
+          <a target="_blank" routerLink="/orders/{{ord.id}}" title="Details" class="btn btn-sm btn-primary mx-2"><span class="fa fa-eye"></span></a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <nav *ngIf="totalPages.length>1">
+      <ul class="pagination">
+        <li class="page-item" [ngClass]="{'active' : p == currentPage}" (click)="goToPage(p)" *ngFor="let p of totalPages"><a class="page-link">{{p+1}}</a></li>
+      </ul>
+    </nav>
+  </div>
+  <ng-template #noOrders>
+    <div class="alert alert-danger container my-5" role="alert">
+      {{hasError}}
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <a class="navbar-brand" routerLink="/">Sports Store</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarColor01">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" *ngIf="isLoggedIn">
+        <a class="nav-link" routerLink="my-orders">My Orders</a>
+      </li>
+      <li class="nav-item" *ngIf="showAdminBoard">
+        <a class="nav-link" routerLink="admin/orders">All Orders</a>
+      </li>
+      <li class="nav-item" *ngIf="showAdminBoard">
+        <a class="nav-link" routerLink="admin/categories">Categories</a>
+      </li>
+      <li class="nav-item" *ngIf="showAdminBoard">
+        <a class="nav-link" routerLink="admin/products">Products</a>
+      </li>
+      <li class="nav-item" *ngIf="showAdminBoard">
+        <a class="nav-link" routerLink="admin/users">Utilisateurs</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav ml-auto" *ngIf="!isLoggedIn">
+      <li class="nav-item">
+        <a href="#" class="nav-link" routerLink="/auth/signup">Sign Up</a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link" routerLink="/auth/login">Login</a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav ml-auto" *ngIf="isLoggedIn">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/my-profile">{{ username | uppercase}}</a>
+      </li>
+      <li class="nav-item">
+        <a href class="nav-link" (click)="logout()">LogOut</a>
+      </li>
+    </ul>
+  </div>
+</nav>

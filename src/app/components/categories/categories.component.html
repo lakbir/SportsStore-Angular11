@@ -1,0 +1,149 @@
+<div class="mx-5">
+  <div  *ngIf="categories; else noCategories">
+    <div class="row">
+      <form class="form-inline">
+        <div class="form-group mx-sm-3 mb-2">
+          <input type="text" class="form-control" [(ngModel)]="keyWord" name="keyWord" placeholder="Search">
+        </div>
+        <button (click)="onSearchCategories()" class="btn btn-primary"><span class="fa fa-search"></span></button>
+        <button (click)="onRefreshCategories()" class="btn btn-warning mx-2"><span class="fa fa-refresh"></span></button>
+        <button data-toggle="modal" (click)="setAddCategory()" data-target="#ModalAddCategory" class="btn btn-success float-right mx-2"><span class="fa fa-plus"></span></button>
+      </form>
+    </div>
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th width="10%">#</th>
+        <th width="25%">Name Category</th>
+        <th width="50%">Description Category</th>
+        <th width="15%">Options</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let cat of categories">
+        <td>{{cat.id}}</td>
+        <td>{{cat.name}}</td>
+        <td>{{cat.description}}</td>
+        <td>
+          <button (click)="setCategoryToAction(cat.id)" class="btn btn-sm btn-danger mx-2" data-toggle="modal" data-target="#ModalDeleteCategory"><span class="fa fa-trash"></span></button>
+          <button (click)="setCategoryToUpdate(cat)" title="Update" class="btn btn-sm btn-primary mx-2" data-toggle="modal" data-target="#ModalUpdateCategory"><span class="fa fa-pencil"></span></button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <nav *ngIf="totalPages.length>1">
+      <ul class="pagination">
+        <li class="page-item" [ngClass]="{'active' : p == currentPage}" (click)="goToPage(p)" *ngFor="let p of totalPages"><a class="page-link">{{p+1}}</a></li>
+      </ul>
+    </nav>
+  </div>
+  <ng-template #noCategories>
+    <div class="alert alert-danger container my-5" role="alert">
+      {{hasError}}
+    </div>
+  </ng-template>
+
+  <!-- Modal delete -->
+  <div class="modal fade" id="ModalDeleteCategory" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Delete Category</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Do you want delete the category N° {{idCategoryToAction}} ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" (click)="deleteCategory()"  data-dismiss="modal">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Add new Category -->
+  <div class="modal fade" id="ModalAddCategory" tabindex="-1" role="dialog" aria-labelledby="modalAddCategoryId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalAddCategoryId">Add New Category</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form [formGroup]="categoryFormGroup">
+          <div class="modal-body">
+
+            <div class="form-group">
+              <label for="name">Category Name</label>
+              <input type="text" class="form-control" formControlName="name" id="name" placeholder="Name...">
+              <div *ngIf="categoryFormGroup.get('name').invalid && (categoryFormGroup.get('name').touched || categoryFormGroup.get('name').dirty)" class="text-danger">
+                <div *ngIf="categoryFormGroup.get('name').getError('required')">This field is required</div>
+                <div *ngIf="categoryFormGroup.get('name').getError('maxlength') || categoryFormGroup.get('name').getError('minlength')">This field should between 3 and 200 caracters</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Category Description</label>
+              <textarea class="form-control" formControlName="description" id="description" placeholder="Description..."></textarea>
+              <div *ngIf="categoryFormGroup.get('description').invalid && (categoryFormGroup.get('description').touched || categoryFormGroup.get('description').dirty)" class="text-danger">
+                <div *ngIf="categoryFormGroup.get('description').getError('required')">This field is required</div>
+                <div *ngIf="categoryFormGroup.get('description').getError('maxlength') || categoryFormGroup.get('description').getError('minlength')">This field should between 10 and 200 caracters</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-arrow-circle-left"></i>Cancel</button>
+            <button [disabled]="categoryFormGroup.invalid" (click)="onAddNewCategory()" data-dismiss="modal" class="btn btn-success"  ><i class="fa fa-plus mx-1"></i> Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal update Category -->
+  <div class="modal fade" id="ModalUpdateCategory" tabindex="-1" role="dialog" aria-labelledby="modalUpdateCategoryId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalUpdateCategoryId">Update Category</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form [formGroup]="categoryFormGroup">
+          <div class="modal-body">
+
+            <div class="form-group">
+              <label for="name">Category Name</label>
+              <input type="text" class="form-control" formControlName="name" id="name" placeholder="Name...">
+              <div *ngIf="categoryFormGroup.get('name').invalid && (categoryFormGroup.get('name').touched || categoryFormGroup.get('name').dirty)" class="text-danger">
+                <div *ngIf="categoryFormGroup.get('name').getError('required')">This field is required</div>
+                <div *ngIf="categoryFormGroup.get('name').getError('maxlength') || categoryFormGroup.get('name').getError('minlength')">This field should between 3 and 200 caracters</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Category Description</label>
+              <textarea class="form-control" formControlName="description" id="description" placeholder="Description..."></textarea>
+              <div *ngIf="categoryFormGroup.get('description').invalid && (categoryFormGroup.get('description').touched || categoryFormGroup.get('description').dirty)" class="text-danger">
+                <div *ngIf="categoryFormGroup.get('description').getError('required')">This field is required</div>
+                <div *ngIf="categoryFormGroup.get('description').getError('maxlength') || categoryFormGroup.get('description').getError('minlength')">This field should between 10 and 200 caracters</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-arrow-circle-left"></i>Cancel</button>
+            <button [disabled]="categoryFormGroup.invalid" (click)="onUpdateCategory()" class="btn btn-success" data-dismiss="modal"><i class="fa fa-save mx-1"></i> Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

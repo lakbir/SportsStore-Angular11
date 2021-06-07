@@ -1,0 +1,52 @@
+<div class="row">
+  <div class="col-md-3" >
+    <button *ngFor="let cat of categories" (click)="searchByCategory(cat.id)" [ngClass]="{'active': cat.id === idCurrentCategory}" class="btn btn-outline-primary btn-block">{{cat.name}}</button>
+  </div>
+
+  <div class="col-md-9">
+    <div class="row">
+      <div class="col-md-9">
+      <form class="form-inline">
+        <div class="form-group mx-sm-3 mb-2">
+          <input type="text" class="form-control" [(ngModel)]="keyWord" name="keyWord" placeholder="Search">
+        </div>
+        <button (click)="onSearchProducts()" class="btn btn-primary"><span class="fa fa-search"></span></button>
+        <button (click)="onRefreshProducts()" class="btn btn-warning mx-2"><span class="fa fa-refresh"></span></button>
+      </form>
+      </div>
+      <div class="col-md-3">
+
+        <a href="/caddy" class="float-right" *ngIf="caddyService.getSize()>0">
+          <span class="badge bg-warning badge-pill text-white">{{caddyService.currentCaddyName}} :
+            {{caddyService.getSize()}}</span>
+          <img class="img-circle img-thumbnail img-rounded" src="assets/img/caddy.png">
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 my-2" *ngFor="let prd of products">
+        <div class="card">
+          <img src="assets/img/{{prd.image}}" alt="{{prd.name}}" height="150" />
+          <div class="card-body">
+            <h5 class="card-title">{{prd.name}}</h5>
+            <h6 class="card-subtitle mb-2 text-muted"><small>{{prd.description}}</small></h6>
+            <span class="badge badge-success">{{prd.price | currency}}</span>
+            <form class="form-inline float-right" *ngIf="isLoggedIn">
+              <div class="form-group mx-sm-3 mb-2">
+                <input type="number" min="1" max="99" class="form-control" name="quantity" ngModel [(ngModel)]="prd.quantity" style="width: 40px" >
+              </div>
+              <button (click)="onAddProductToCaddy(prd)" class="btn float-right btn-outline-warning btn-sm  mr-1"><span class="fa fa-cart-plus mx-1"></span></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+      <div class="row">
+      <nav *ngIf="totalPages.length>1">
+        <ul class="pagination">
+          <li class="page-item" [ngClass]="{'active' : p == currentPage}" (click)="goToPage(p)" *ngFor="let p of totalPages"><a class="page-link">{{p+1}}</a></li>
+        </ul>
+      </nav>
+      </div>
+  </div>
+</div>

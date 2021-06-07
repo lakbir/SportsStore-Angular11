@@ -1,0 +1,64 @@
+<div class="card" *ngIf="order">
+  <h5 class="card-header bg-success text-white"> Order Number : {{order.id}}</h5>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>Client :</label>
+          <label>{{order.client.name}}</label>
+        </div>
+        <div class="form-group">
+          <label>Client Adresse :</label>
+          <label>{{order.client.address}}</label>
+        </div>
+        <div class="form-group">
+          <label>Client Phone :</label>
+          <label>{{order.client.phoneNumber}}</label>
+        </div>
+        <div class="form-group">
+          <label>Email :</label>
+          <label>{{order.client.email}}</label>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>Order ID :</label>
+          <label>{{order.id}}</label>
+        </div>
+        <div class="form-group">
+          <label>Order Date :</label>
+          <label>{{order.date.substring(0, 16).replace('T',' | ')}}</label>
+        </div>
+        <div class="form-group">
+          <label>Card Number :</label>
+          <label>{{order.payment.cardNumber}}</label>
+        </div>
+        <div class="form-group">
+          <label>Card Type :</label>
+          <label>{{order.payment.type}}</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <table class="table table-striped">
+        <tr>
+          <th>ID</th>
+          <th>Product</th>
+          <th>Quantité</th>
+          <th>Prix</th>
+        </tr>
+        <tr *ngFor="let p of order.orderItems">
+          <td>{{p.id}}</td>
+          <td>{{p.product.name}}</td>
+          <td>{{p.quantity|number:'0.2'}}</td>
+          <td>{{p.price|number:'0.2'}}</td>
+        </tr>
+        <tr>
+          <td colspan="3">Total:</td>
+          <td>{{order.totalAmount |number:'0.2'}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+

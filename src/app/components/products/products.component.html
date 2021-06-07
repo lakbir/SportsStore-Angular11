@@ -1,0 +1,180 @@
+<div class="mx-5">
+  <div  *ngIf="products; else noProducts">
+    <div class="row">
+      <form class="form-inline">
+        <div class="form-group mx-sm-3 mb-2">
+          <input type="text" class="form-control" [(ngModel)]="keyWord" name="keyWord" placeholder="Search">
+        </div>
+        <button (click)="onSearchProducts()" class="btn btn-primary"><span class="fa fa-search"></span></button>
+        <button (click)="onRefreshProducts()" class="btn btn-warning mx-2"><span class="fa fa-refresh"></span></button>
+        <button data-toggle="modal" (click)="setAddProduct()" data-target="#ModalAddProduct" class="btn btn-success float-right mx-2"><span class="fa fa-plus"></span></button>
+      </form>
+    </div>
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th width="10%">#</th>
+        <th width="25%">Product</th>
+        <th width="35%">Description</th>
+        <th width="15%">Price</th>
+        <th width="15%">Options</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let prd of products">
+        <td>{{prd.id}}</td>
+        <td>{{prd.name}}</td>
+        <td>{{prd.description}}</td>
+        <td>{{prd.price}}</td>
+        <td>
+          <button (click)="setProductToAction(prd.id)" class="btn btn-sm btn-danger mx-2" data-toggle="modal" data-target="#ModalDeleteProduct"><span class="fa fa-trash"></span></button>
+          <button (click)="setProductToUpdate(prd)" title="Update" class="btn btn-sm btn-primary mx-2" data-toggle="modal" data-target="#ModalUpdateProduct"><span class="fa fa-pencil"></span></button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <nav *ngIf="totalPages.length>1">
+      <ul class="pagination">
+        <li class="page-item" [ngClass]="{'active' : p == currentPage}" (click)="goToPage(p)" *ngFor="let p of totalPages"><a class="page-link">{{p+1}}</a></li>
+      </ul>
+    </nav>
+  </div>
+  <ng-template #noProducts>
+    <div class="alert alert-danger container my-5" role="alert">
+      {{hasError}}
+    </div>
+  </ng-template>
+
+  <!-- Modal delete -->
+  <div class="modal fade" id="ModalDeleteProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Do you want delete the product N° {{idProductToAction}} ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" (click)="deleteProduct()"  data-dismiss="modal">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Add new Product -->
+  <div class="modal fade" id="ModalAddProduct" tabindex="-1" role="dialog" aria-labelledby="modalAddProductId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalAddProductId">Add New Product</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form [formGroup]="productFormGroup">
+          <div class="modal-body">
+
+            <div class="form-group">
+              <label for="name">Product Name</label>
+              <input type="text" class="form-control" formControlName="name" placeholder="Name...">
+              <div *ngIf="productFormGroup.get('name').invalid && (productFormGroup.get('name').touched || productFormGroup.get('name').dirty)" class="text-danger">
+                <div *ngIf="productFormGroup.get('name').getError('required')">This field is required</div>
+                <div *ngIf="productFormGroup.get('name').getError('maxlength') || productFormGroup.get('name').getError('minlength')">This field should between 5 and 100 caracters</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Product Description</label>
+              <textarea class="form-control" formControlName="description" placeholder="Description..."></textarea>
+              <div *ngIf="productFormGroup.get('description').invalid && (productFormGroup.get('description').touched || productFormGroup.get('description').dirty)" class="text-danger">
+                <div *ngIf="productFormGroup.get('description').getError('required')">This field is required</div>
+                <div *ngIf="productFormGroup.get('description').getError('maxlength') || productFormGroup.get('description').getError('minlength')">This field should between 10 and 200 caracters</div>
+              </div>
+            </div>
+
+
+            <div class="form-group">
+              <label for="name">Product Price</label>
+              <input type="text" class="form-control" formControlName="price" placeholder="Price...">
+              <div *ngIf="productFormGroup.get('price').invalid && (productFormGroup.get('price').touched || productFormGroup.get('price').dirty)" class="text-danger">
+                <div *ngIf="productFormGroup.get('price').getError('required')">This field is required</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <select formControlName="idCategory" class="form-control" aria-label="Default select example">
+                <option selected>Category</option>
+                <option *ngFor="let c of categories" value="{{c.id}}">{{c.name}}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="exampleFormControlFile1">Image</label>
+              <input type="file" formControlName="image" class="form-control-file" id="exampleFormControlFile1">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-arrow-circle-left"></i>Cancel</button>
+            <button [disabled]="productFormGroup.invalid" (click)="onAddNewProduct()" data-dismiss="modal" class="btn btn-success"  ><i class="fa fa-plus mx-1"></i> Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal update Product -->
+  <div class="modal fade" id="ModalUpdateProduct" tabindex="-1" role="dialog" aria-labelledby="modalUpdateProductId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalUpdateProductId">Update Product</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form [formGroup]="productFormGroup">
+          <div class="modal-body">
+
+            <div class="form-group">
+              <label for="name">Product Name</label>
+              <input type="text" class="form-control" formControlName="name" placeholder="Name...">
+              <div *ngIf="productFormGroup.get('name').invalid && (productFormGroup.get('name').touched || productFormGroup.get('name').dirty)" class="text-danger">
+                <div *ngIf="productFormGroup.get('name').getError('required')">This field is required</div>
+                <div *ngIf="productFormGroup.get('name').getError('maxlength') || productFormGroup.get('name').getError('minlength')">This field should between 5 and 100 caracters</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Product Description</label>
+              <textarea class="form-control" formControlName="description" placeholder="Description..."></textarea>
+              <div *ngIf="productFormGroup.get('description').invalid && (productFormGroup.get('description').touched || productFormGroup.get('description').dirty)" class="text-danger">
+                <div *ngIf="productFormGroup.get('description').getError('required')">This field is required</div>
+                <div *ngIf="productFormGroup.get('description').getError('maxlength') || productFormGroup.get('description').getError('minlength')">This field should between 10 and 200 caracters</div>
+              </div>
+            </div>
+
+
+            <div class="form-group">
+              <label for="price">Product Price</label>
+              <input type="text" class="form-control" formControlName="price" placeholder="Price...">
+              <div *ngIf="productFormGroup.get('price').invalid && (productFormGroup.get('price').touched || productFormGroup.get('price').dirty)" class="text-danger">
+                <div *ngIf="productFormGroup.get('price').getError('required')">This field is required</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-arrow-circle-left"></i>Cancel</button>
+            <button [disabled]="productFormGroup.invalid" (click)="onUpdateProduct()" class="btn btn-success" data-dismiss="modal"><i class="fa fa-save mx-1"></i> Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
