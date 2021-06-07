@@ -1,4 +1,4 @@
-# Hacktohire
+# Sports Store
 
 A simple project commerce back-end to manage the Products by categories with a simples interfaces :
 
