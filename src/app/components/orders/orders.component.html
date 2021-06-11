@@ -31,7 +31,7 @@
           <span *ngIf="!ord.payment" title="not payed" class="badge badge-warning text-white"><i class="fa fa-warning"></i></span>
         </td>
         <td>
-          <a target="_blank" routerLink="/orders/{{ord.id}}" title="Details" class="btn btn-sm btn-primary mx-2"><span class="fa fa-eye"></span></a>
+          <button  (click)="onShowOrder(ord.id)" title="Details" class="btn btn-sm btn-primary mx-2"><span class="fa fa-eye"></span></button>
         </td>
       </tr>
       </tbody>

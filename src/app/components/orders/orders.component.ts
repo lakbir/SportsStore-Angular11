@@ -3,6 +3,7 @@ import {errors} from '../../../environments/environment';
 import {ToastrService} from 'ngx-toastr';
 import {Order} from '../../models/Order.model';
 import {OrderService} from '../../services/order.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-orders',
@@ -18,7 +19,9 @@ export class OrdersComponent implements OnInit {
   sizeShower: number = 10;
   hasError: string = errors.error_no_orders;
 
-  constructor(private orderService: OrderService, private toastr: ToastrService) { }
+  constructor(private orderService: OrderService,
+              private router: Router,
+              private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.getAllOrders();
@@ -53,5 +56,9 @@ export class OrdersComponent implements OnInit {
   goToPage(p: number) {
     this.currentPage = p;
     this.getAllOrders();
+  }
+
+  onShowOrder(id: number) {
+    this.router.navigateByUrl("/orders/"+id);
   }
 }

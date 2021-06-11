@@ -47,13 +47,13 @@
         </div>
       </div>
       <div class="col-md-6">
-        <div class="form-group">
+        <div class="form-group" *ngIf="orderService.order.id">
           <label>Order ID :</label>
           <label>{{orderService.order.id}}</label>
         </div>
-        <div class="form-group">
+        <div class="form-group" *ngIf="orderService.order.date">
           <label>Order Date :</label>
-          <label>{{orderService.order.date}}</label>
+          <label>{{orderService.order.date.substring(0, 16).replace('T',' | ')}}</label>
         </div>
       </div>
     </div>

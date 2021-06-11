@@ -4,6 +4,7 @@ import {errors} from '../../../environments/environment';
 import {OrderService} from '../../services/order.service';
 import {ToastrService} from 'ngx-toastr';
 import {TokenStorageService} from '../../services/token-storage.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-my-orders',
@@ -19,7 +20,10 @@ export class MyOrdersComponent implements OnInit {
   sizeShower: number = 10;
   hasError: string = errors.error_no_orders;
 
-  constructor(private orderService: OrderService, private toastr: ToastrService, private tokenService: TokenStorageService) { }
+  constructor(private orderService: OrderService,
+              private toastr: ToastrService,
+              private router: Router,
+              private tokenService: TokenStorageService) { }
 
   ngOnInit(): void {
     this.keyWord = this.tokenService.getUser().username;
@@ -57,4 +61,7 @@ export class MyOrdersComponent implements OnInit {
     this.getAllOrders();
   }
 
+  onShowOrder(id: number) {
+    this.router.navigateByUrl("/orders/"+id);
+  }
 }
